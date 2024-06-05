@@ -1,4 +1,4 @@
-import { onAuthStateChanged, signInWithEmailAndPassword, signInWithRedirect, signOut } from "firebase/auth";
+import { onAuthStateChanged, signInWithEmailAndPassword, signInWithPopup, signOut } from "firebase/auth";
 import { auth } from "../firebase";
 import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
@@ -21,7 +21,6 @@ const Login = () => {
 
     return () => unsubscribe();
   }, []);
-
 
   const login = async (event) => {
     event.preventDefault();
@@ -47,12 +46,12 @@ const Login = () => {
       console.log(error.message);
     }
   };
-  const {  authUser } = UserAuth();
+
   const handleGoogleSignIn = async () => {
     try {
-      await googleSignIn();
-      await signInWithRedirect(auth, authUser); // Utilisation de signInWithRedirect pour rediriger vers la page de connexion Google
+      await signInWithPopup(auth, googleSignIn);
       toast.success("Google Sign-In Successful");
+      navigate("/monsite");
     } catch (error) {
       toast.error("Error during Google Sign-In");
       console.log(error);
@@ -93,8 +92,8 @@ const Login = () => {
         </button>
       </form>
       <div className="social-account-container">
-      <Link to="/signup">
-        <span className="title">Or Sign in with</span>
+        <Link to="/signup">
+          <span className="title">Or Sign in with</span>
         </Link>
         <div className="social-accounts">
           <GoogleButton onClick={handleGoogleSignIn} />

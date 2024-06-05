@@ -19,9 +19,8 @@ function App() {
             <Route path="/login" element={<Login />} />
             <Route path="/monsite" element={<MonSite />} />
           </Routes>
+          <ToastContainer /> {/* Place ToastContainer inside BrowserRouter */}
         </BrowserRouter>
-
-        <ToastContainer />
       </AuthContextProvider>
     </div>
   );

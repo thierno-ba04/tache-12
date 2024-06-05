@@ -1,91 +1,64 @@
-import {
-  createUserWithEmailAndPassword,
-  onAuthStateChanged,
-  signInWithRedirect,
-  signOut,
-} from "firebase/auth";
 import { useState, useEffect } from "react";
+import { createUserWithEmailAndPassword, onAuthStateChanged } from "firebase/auth";
 import { auth } from "../firebase";
-import { useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
+import 'react-toastify/dist/ReactToastify.css';
+import { useNavigate } from "react-router-dom";
 import GoogleButton from "react-google-button";
-import { UserAuth } from "../context/AuthContext";
-// import { FacebookAuthProvider } from "firebase/auth/web-extension";
 
 const SignUp = () => {
-  const [fullname, setFullname] = useState("");
+  const [user, setUser] = useState({});
   const [registerEmail, setRegisterEmail] = useState("");
   const [registerPassword, setRegisterPassword] = useState("");
-  const [user, setUser] = useState(null);
-  const navigate = useNavigate();
+  const { googleSignIn } = UserAuth();
 
-  // connection avec google
-  const { googleSignIn, authUser } = UserAuth();
-
-  const handleGoogleSignIn = async () => {
-    try {
-      await googleSignIn();
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
-  useEffect(() => {
-    if (user != null) {
-      navigate("/login");
-    }
-  }, [user]);
+  const navigate = useNavigate(); // Utilisation de useNavigate pour la redirection
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
       setUser(currentUser);
     });
 
+    // Cleanup subscription on unmount
     return () => unsubscribe();
   }, []);
 
-  // fin code google
-
-  // connection avec facebook
-  // const handleFacebookSignIn = async () => {
-  //   const provider = new FacebookAuthProvider();
-  //   try {
-  //     const result = await signInWithRedirect(auth, provider);
-  //     console.log("Facebook sign in result:", result.user);
-  //     navigate("/connect");
-  //   } catch (error) {
-  //     console.error("Error during Facebook sign in:", error.message);
-  //   }
-  // };
-
-  // fin connection avec facebook
-
   const register = async (event) => {
-    event.preventDefault();
-    if (!fullname || !registerEmail || !registerPassword) {
-      toast.error("Please fill in all fields");
-      return;
-    }
+    event.preventDefault(); // Prevent default form submission behavior
     try {
       const userCredential = await createUserWithEmailAndPassword(
         auth,
         registerEmail,
         registerPassword
       );
-      toast.success("CREER avec succès");
-      console.log(userCredential.user);
-      navigate("/login");
+      toast.success("Creation du compte reussi!", {
+        autoClose: 3000 // Durée de la notification en millisecondes
+      });
+      console.log(userCredential);
+      setTimeout(() => navigate('/login'), 3000); // Rediriger vers la page de connexion après 3 secondes
     } catch (error) {
-      toast.error(error.message);
+      toast.error(`Error: ${error.message}`, {
+        autoClose: 3000 // Durée de la notification en millisecondes
+      });
       console.log(error.message);
     }
+
+    const handleGoogleSignIn = async () => {
+      try {
+        await signInWithPopup(auth, googleSignIn);
+        toast.success("Google Sign-In Successful");
+        navigate("/monsite");
+      } catch (error) {
+        toast.error("Error during Google Sign-In");
+        console.log(error);
+      }
+    };
   };
 
   return (
     <div className="container">
       <ToastContainer />
-      <div className="heading">Sign Up</div>
+      <div className="heading">Sign In</div>
       <form className="form" onSubmit={register}>
         <input
           required
@@ -94,7 +67,6 @@ const SignUp = () => {
           name="fullname"
           id="fullname"
           placeholder="Full name"
-          onChange={(e) => setFullname(e.target.value)}
         />
         <input
           required
@@ -103,7 +75,9 @@ const SignUp = () => {
           name="email"
           id="email"
           placeholder="E-mail"
-          onChange={(e) => setRegisterEmail(e.target.value)}
+          onChange={(event) => {
+            setRegisterEmail(event.target.value);
+          }}
         />
         <input
           required
@@ -112,22 +86,21 @@ const SignUp = () => {
           name="password"
           id="password"
           placeholder="Password"
-          onChange={(e) => setRegisterPassword(e.target.value)}
+          onChange={(event) => {
+            setRegisterPassword(event.target.value);
+          }}
         />
-        <button type="submit" className="login-button">
-          Sign Up
-        </button>
+        <span className="forgot-password">
+          <a href="#">Forgot Password ?</a>
+        </span>
+        <button className="login-button" type="submit">Creer</button>
       </form>
       <div className="social-account-container">
-        <span className="title">Or Sign up with</span>
+        <span className="title">Or Sign in with</span>
         <div className="social-accounts">
           <GoogleButton onClick={handleGoogleSignIn} />
-        </div>
-        {/* <div className="social-accounts">
-          <FacebookLoginButton onClick={handleFacebookSignIn} />
-        </div> */}
-
-      </div>
+        </div>     
+         </div>
     </div>
   );
 };
