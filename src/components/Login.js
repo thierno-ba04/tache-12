@@ -1,4 +1,4 @@
-import { onAuthStateChanged, signInWithEmailAndPassword, signInWithRedirect, signOut } from "firebase/auth";
+import { signInWithEmailAndPassword, signInWithRedirect } from "firebase/auth";
 import { auth } from "../firebase";
 import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
@@ -9,19 +9,14 @@ import { ToastContainer, toast } from "react-toastify";
 const Login = () => {
   const [loginEmail, setLoginEmail] = useState("");
   const [loginPassword, setLoginPassword] = useState("");
-  const [user, setUser] = useState(null);
+  const { googleSignIn, user } = UserAuth();
   const navigate = useNavigate();
 
-  const { googleSignIn } = UserAuth();
-
-  useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
-      setUser(currentUser);
-    });
-
-    return () => unsubscribe();
-  }, []);
-
+  // useEffect(() => {
+  //   if (user) {
+  //     navigate("/monsite");
+  //   }
+  // }, [user, navigate]);
 
   const login = async (event) => {
     event.preventDefault();
@@ -30,14 +25,12 @@ const Login = () => {
       return;
     }
     try {
-      const userCredential = await signInWithEmailAndPassword(
-        auth,
-        loginEmail,
-        loginPassword
-      );
-      toast.success("Well Done");
-      console.log(userCredential.user);
-      navigate("/monsite");
+      await signInWithEmailAndPassword(auth, loginEmail, loginPassword);
+      toast.success("Login successful", {
+        position: "top-right",
+        autoClose: 3000,
+        onClose: () => navigate("/monsite"),
+      });
     } catch (error) {
       if (error.code === "auth/wrong-password") {
         toast.error("Incorrect password. Please try again.");
@@ -47,23 +40,16 @@ const Login = () => {
       console.log(error.message);
     }
   };
-  const {  authUser } = UserAuth();
+
   const handleGoogleSignIn = async () => {
     try {
       await googleSignIn();
-      await signInWithRedirect(auth, authUser); // Utilisation de signInWithRedirect pour rediriger vers la page de connexion Google
       toast.success("Google Sign-In Successful");
     } catch (error) {
       toast.error("Error during Google Sign-In");
       console.log(error);
     }
   };
-
-  useEffect(() => {
-    if (user != null) {
-      navigate("/monsite");
-    }
-  }, [user, navigate]);
 
   return (
     <div className="container">
@@ -93,13 +79,14 @@ const Login = () => {
         </button>
       </form>
       <div className="social-account-container">
-      <Link to="/signup">
         <span className="title">Or Sign in with</span>
-        </Link>
         <div className="social-accounts">
           <GoogleButton onClick={handleGoogleSignIn} />
         </div>
       </div>
+      <Link to="/signup">
+        <span>Don't have an account? Sign up here</span>
+      </Link>
     </div>
   );
 };
