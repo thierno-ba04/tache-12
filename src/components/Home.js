@@ -1,13 +1,15 @@
 import { Link } from "react-router-dom";
+import img1 from"../assets/img/discord-logo.png";
 
 
 const Home = () => {
   return (
     <div className="container">
+      <img src={img1} style={{width:"70%", marginLeft: "40px"}} />
       <div className="heading">Evon</div>
-      <p>
+      {/* <p>
         Discover upcoming events <br /> near you
-      </p> <br />
+      </p> <br /> */}
       <form action="" className="form">
         <Link to="/signup">
           <input className="login-button" type="submit" value="Sign In" />
