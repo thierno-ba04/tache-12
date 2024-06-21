@@ -23,29 +23,7 @@ const Home = () => {
         <span className="title">Skip for now</span>
       </div>
     </div>
-    // <form action="" className="form_main">
-    //   <div className="icone">
-    //     <i class="fa fa-map-marker" aria-hidden="true"></i>
-    //     <i class="fa fa-map-marker" aria-hidden="true"></i>
-    //   </div>
-    //   <h2>Evon</h2>
-    //   <div className="ev">
-    //     <p>
-    //       Discover upcoming events <br /> near you
-    //     </p>
-    //   </div>
-    //   <div className="bottom">
-    //     <Link to="/signup">
-    //       <button id="button">Sign in</button>
-    //     </Link>
-    //     <Link to="/login">
-    //       <button id="button">Login</button>
-    //     </Link>
-    //     <a class="forgotLink" href="#">
-    //       Skip for now
-    //     </a>
-    //   </div>
-    // </form>
+    
   );
 };
 

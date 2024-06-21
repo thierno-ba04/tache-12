@@ -9,9 +9,6 @@
   background-color: rgb(255, 255, 255);
   padding: 30px 30px 30px 30px;
   box-shadow: 0px 0px 40px rgba(0, 0, 0, 0.062);
-  position: relative;
-  left: 700px;
-  top: 205px;
   overflow: hidden;
 }
 
@@ -273,3 +270,28 @@ height: 100px;
   }
 
   /* fin sign up */
+
+
+
+
+
+  /* RESPONSIVE */
+
+
+  @media screen and (max-width:768px){
+    
+  .container {
+    position: relative;
+    left: 170px;
+    /* top: 100px; */
+  }
+  }
+
+  @media screen and (max-width:560px){
+    
+    .container {
+      position: relative;
+      left: 20px;
+      /* top: 100px; */
+    }
+    }
